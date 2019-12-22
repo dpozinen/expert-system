@@ -1,5 +1,5 @@
 package dpozinen.io
 
-class Reader {
+class Input {
 
 }
