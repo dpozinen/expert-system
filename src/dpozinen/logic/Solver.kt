@@ -5,8 +5,8 @@ package dpozinen.logic
  */
 class Solver {
 
-    fun solve() {
-        print("solved")
-    }
+	fun solve() {
+		print("solved")
+	}
 
 }

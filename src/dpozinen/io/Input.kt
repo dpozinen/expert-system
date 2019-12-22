@@ -4,6 +4,6 @@ import dpozinen.logic.Rule
 
 object Input {
 
-    var rules: List<Rule> = emptyList()
+	var rules: List<Rule> = emptyList()
 
 }
