@@ -1,5 +1,9 @@
 package dpozinen.logic
 
-class Fact {
+/**
+ * @author dpozinen
+ */
+class Fact(private val symbol: Symbol, private val name: String) {
+
 
 }

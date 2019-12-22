@@ -1,5 +1,9 @@
 package dpozinen.io
 
-class Input {
+import dpozinen.logic.Rule
+
+object Input {
+
+    var rules: List<Rule> = emptyList()
 
 }
