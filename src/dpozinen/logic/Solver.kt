@@ -20,8 +20,8 @@ class Solver {
 	}
 
 	private fun solveFor(leaf: Leaf): List<String> {
-		val visited: List<Leaf> = emptyList()
-		val statements: List<String> = emptyList()
+		val visited: MutableList<Leaf> = mutableListOf()
+		val statements: MutableList<String> = mutableListOf()
 		leaf.apply(visited, statements)
 		return statements
 	}
