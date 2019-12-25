@@ -4,6 +4,8 @@ import dpozinen.logic.tree.Leaf
 
 object Input {
 
-	var rules: List<Leaf> = emptyList()
+	var leaves: List<Leaf> = emptyList()
+	var truths: List<Leaf> = emptyList()
+	var queries: List<Leaf> = emptyList()
 
 }

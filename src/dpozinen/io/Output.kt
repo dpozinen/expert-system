@@ -1,5 +1,11 @@
 package dpozinen.io
 
-class Output {
+import com.google.common.base.Stopwatch
+import dpozinen.logic.tree.Leaf
 
-}
+@Suppress("UnstableApiUsage")
+class Output(
+	private val statements: List<String>,
+	private val stopwatch: Stopwatch,
+	val target: Leaf
+)
