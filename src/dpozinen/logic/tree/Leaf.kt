@@ -6,5 +6,5 @@ package dpozinen.logic.tree
 interface Leaf {
 	var value: Boolean
 	val leaves: List<Leaf>
-	fun apply()
+	fun apply(visited: List<Leaf>, statements: List<String>)
 }
