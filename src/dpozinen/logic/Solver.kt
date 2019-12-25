@@ -3,7 +3,7 @@ package dpozinen.logic
 import com.google.common.base.Stopwatch
 import dpozinen.io.Input
 import dpozinen.io.Output
-import dpozinen.logic.tree.Leaf
+import dpozinen.logic.leaves.Leaf
 
 /**
  * @author dpozinen
@@ -23,7 +23,7 @@ class Solver {
 		val visited: List<Leaf> = emptyList()
 		val statements: List<String> = emptyList()
 		leaf.apply(visited, statements)
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		return statements
 	}
 
 }

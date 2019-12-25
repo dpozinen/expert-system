@@ -1,4 +1,4 @@
-package dpozinen.logic.tree
+package dpozinen.logic.leaves
 
 /**
  * @author dpozinen
