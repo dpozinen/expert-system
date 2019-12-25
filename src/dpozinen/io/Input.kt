@@ -1,9 +1,9 @@
 package dpozinen.io
 
-import dpozinen.logic.Rule
+import dpozinen.logic.tree.Leaf
 
 object Input {
 
-	var rules: List<Rule> = emptyList()
+	var rules: List<Leaf> = emptyList()
 
 }
