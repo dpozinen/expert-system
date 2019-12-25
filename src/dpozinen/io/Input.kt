@@ -1,11 +1,12 @@
 package dpozinen.io
 
-import dpozinen.logic.tree.Leaf
+import dpozinen.logic.leaves.Leaf
 
 object Input {
 
 	var leaves: List<Leaf> = emptyList()
 	var truths: List<Leaf> = emptyList()
 	var queries: List<Leaf> = emptyList()
+	val verbose: Boolean = false
 
 }
