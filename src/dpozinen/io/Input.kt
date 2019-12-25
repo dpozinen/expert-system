@@ -7,6 +7,6 @@ object Input {
 	var leaves: List<Leaf> = emptyList()
 	var truths: List<Leaf> = emptyList()
 	var queries: List<Leaf> = emptyList()
-	val verbose: Boolean = false
+	var verbose: Boolean = false
 
 }

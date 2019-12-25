@@ -12,7 +12,7 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun fillFlags() {
-		TODO()
+		if (args.contains("-v")) Input.verbose = true;
 	}
 
 	private fun fillFromFile() {
