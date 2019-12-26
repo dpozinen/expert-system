@@ -3,10 +3,10 @@ package dpozinen.logic.leaves
 /**
  * @author dpozinen
  */
-abstract class Leaf(private val name: String) {
+abstract class Leaf(protected val name: String) {
 	var value: Boolean = false
 	val leaves: MutableList<Leaf> = mutableListOf()
-	abstract fun apply(visited: MutableList<Leaf>, statements: MutableList<String>)
+	abstract fun apply(visited: MutableList<Leaf>, statements: MutableList<String>) : Boolean
 
 	override fun equals(other: Any?): Boolean {
 		return other is Leaf && other.name == name
@@ -20,5 +20,4 @@ abstract class Leaf(private val name: String) {
 		return name.hashCode()
 	}
 
-	fun name() = name
 }
