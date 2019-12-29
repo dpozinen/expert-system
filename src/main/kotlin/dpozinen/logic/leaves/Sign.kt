@@ -5,10 +5,10 @@ import dpozinen.logic.Symbol
 /**
  * @author dpozinen
  */
-class Sign(name: String, private val symbol: Symbol) : Leaf(name) {
+class Sign(private val symbol: Symbol, name: String = symbol.name) : Leaf(name) {
 
     override fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean {
-        val leafValues = leaves.map { apply(visited, statements) }.toList()
+        val leafValues = leaves.map { it.apply(visited, statements) }.toList()
         return applySymbol(symbol, leafValues)
     }
 
