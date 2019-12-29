@@ -9,14 +9,15 @@ class Fact(name: String, negate: Boolean = false) : Leaf(name, negate) {
 		if (!visited.contains(this)) {
 			visited.add(this)
 			if (!value()) {
-				statements.add("$name is FALSE")
 				for (leaf in leaves) {
 					val v : Boolean = leaf.apply(visited, statements)
 					if (v) {
-						statements.add("$name is now TRUE")
+						statements.add("$name ends up TRUE")
+						value = v
 						return value(v)
 					}
 				}
+				statements.add("$name is FALSE")
 			} else
 				statements.add("$name is TRUE")
 		}

@@ -1,5 +1,8 @@
 package dpozinen.logic.leaves
 
+import dpozinen.io.Input
+
+
 /**
  * @author dpozinen
  */
@@ -26,6 +29,13 @@ abstract class Leaf(val name: String, var value: Boolean = false, private val ne
 		return name.hashCode()
 	}
 
+	fun logVerbose(statements: MutableList<String>) {
+		if (Input.verbose) {
+			val leavesJoin = leaves.joinToString { " and " }
+			val statement = "For $name to be TRUE %s must be %b".format(leavesJoin, value(true))
+			statements.add(statement)
+		}
+	}
 
 
 }
