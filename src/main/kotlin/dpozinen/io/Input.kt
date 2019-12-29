@@ -4,9 +4,9 @@ import dpozinen.logic.leaves.Leaf
 
 object Input {
 
-	var leaves: MutableList<Leaf> = mutableListOf()
-	var truths: MutableList<Leaf> = mutableListOf()
-	var queries: MutableList<Leaf> = mutableListOf()
+	var leaves = mutableListOf<Leaf>()
+	var truths = mutableListOf<Leaf>()
+	var queries = mutableListOf<Leaf>()
 
 	var fullNames: Boolean = false
 	var verbose: Boolean = false

@@ -9,7 +9,7 @@ class Rule(name: String, negate: Boolean = false) : Leaf(name, negate) {
 		if (!visited.contains(this)) {
 			visited.add(this)
 			if (!value()) {
-				statements.add("$name is False")
+				statements.add("$name is FALSE")
 				for (leaf in leaves) {
 					val v: Boolean = leaf.apply(visited, statements)
 					if (v) {

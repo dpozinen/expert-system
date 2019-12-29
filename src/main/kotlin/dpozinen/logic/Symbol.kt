@@ -3,7 +3,7 @@ package dpozinen.logic
 /**
  * @author dpozinen
  */
-enum class Symbol(private val symbol: String) {
+enum class Symbol(val symbol: String) {
 	IS("."),
 	NOT("!"),
 	AND("+"),

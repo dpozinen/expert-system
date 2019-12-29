@@ -3,8 +3,8 @@ package dpozinen.logic.leaves
 /**
  * @author dpozinen
  */
-abstract class Leaf(protected val name: String, private var value: Boolean = false, private val negate: Boolean = false) {
-	val leaves: MutableList<Leaf> = mutableListOf()
+abstract class Leaf(val name: String, var value: Boolean = false, private val negate: Boolean = false) {
+	val leaves = mutableListOf<Leaf>()
 
 //	TODO("Rule#apply() and Fact#apply() are identical")
 	abstract fun apply(visited: MutableList<Leaf>, statements: MutableList<String>) : Boolean
@@ -25,5 +25,7 @@ abstract class Leaf(protected val name: String, private var value: Boolean = fal
 	override fun hashCode(): Int {
 		return name.hashCode()
 	}
+
+
 
 }
