@@ -10,12 +10,11 @@ class Fact(name: String, negate: Boolean = false) : Leaf(name, negate) {
 			visited.add(this)
 			if (!value()) {
 				statements.add("$name is FALSE")
-				var v : Boolean
 				for (leaf in leaves) {
-					v = leaf.apply(visited, statements)
+					val v : Boolean = leaf.apply(visited, statements)
 					if (v) {
 						statements.add("$name is now TRUE")
-						break // TODO("fix Not values")
+						return value(v)
 					}
 				}
 			} else

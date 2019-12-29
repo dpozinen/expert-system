@@ -6,11 +6,12 @@ package dpozinen.logic.leaves
 abstract class Leaf(protected val name: String, private var value: Boolean = false, private val negate: Boolean = false) {
 	val leaves: MutableList<Leaf> = mutableListOf()
 
+//	TODO("Rule#apply() and Fact#apply() are identical")
 	abstract fun apply(visited: MutableList<Leaf>, statements: MutableList<String>) : Boolean
 
-	fun value() : Boolean = when {
-		negate -> !value
-		else -> value
+	fun value(v: Boolean = value) : Boolean = when {
+		negate -> !v
+		else -> v
 	}
 
 	override fun equals(other: Any?): Boolean {
