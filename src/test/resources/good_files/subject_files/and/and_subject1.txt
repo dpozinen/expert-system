@@ -1,0 +1,11 @@
+
+L + M => K 
+O + P => L | N
+N => M 
+
+
+=DEIJP
+
+?K
+
+#C:\\Users\\Dariy\\Documents\\Code\\py-expert-system\\test\\examples\\good_files\\subject_files\\and\\and_subject1.txt
