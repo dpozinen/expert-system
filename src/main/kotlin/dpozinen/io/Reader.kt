@@ -61,7 +61,7 @@ class Reader(private val args: Array<String>) {
 
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
 		val leaf = Input.leaves.firstOrNull { it.name == name }
-		if (leaf == null)
+		if (leaf == null) // TODO("maybe just ignore this one")
 			throw IllegalArgumentException("One of the provided targets/truths is invalid")
 		else
 			target.add(leaf)
@@ -82,16 +82,16 @@ class Reader(private val args: Array<String>) {
 		conclusion.leaves.add(body)
 	}
 
-//	TODO("Add braces parsing")
 //	TODO("Add validation checks")
+//	TODO("Solve broken refs for (A + B) | (B + C)")
 	private fun parseRule(line: String): Leaf {
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
 			leaf = Rule(line, line.startsWith(NOT.symbol)) // TODO("make true only for braces")
 			when {
-				line.contains(XOR.symbol) -> parse(leaf, line, XOR)
-				line.contains(OR.symbol) -> parse(leaf, line, OR)
-				line.contains(AND.symbol) -> parse(leaf, line, AND)
+				isSplittableBy(line, XOR) -> parse(leaf, line, XOR)
+				isSplittableBy(line, OR) -> parse(leaf, line, OR)
+				isSplittableBy(line, AND) -> parse(leaf, line, AND)
 			}
 		} else {
 			leaf = Fact(line, line.startsWith("!"))
@@ -100,12 +100,36 @@ class Reader(private val args: Array<String>) {
 		return leaf
 	}
 
+	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
+
 	private fun parse(rule: Rule, line: String, symbol: Symbol) {
 		val sign = Sign(symbol)
 		rule.leaves.add(sign)
 
-		val split = line.split(symbol.symbol)
+		val split = splitLine(line, symbol)
 		sign.leaves.addAll(split.map { parseRule(it) }.toList())
+	}
+
+	private fun splitLine(line: String, symbol: Symbol): List<String> {
+		var l = line
+		if (hasNoNestedParentheses(line))
+			l = line.removePrefix("(").removeSuffix(")")
+
+		val indices = l.indices.filter { l[it].toString() == symbol.symbol }.toList()
+		for (i in indices) {
+			val split = split(l, i)
+			if (isValidSplit(split))
+				return split
+		}
+		return emptyList()
+	}
+
+	private fun hasNoNestedParentheses(line: String) = line.matches(Regex("^\\([^()]+\\)\$"))
+
+	private fun split(line: String, i: Int) = listOf(line.subSequence(0, i).toString(), line.subSequence(i + 1, line.length).toString())
+
+	private fun isValidSplit(split: List<String>): Boolean {
+		return split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
 	}
 
 }
