@@ -18,6 +18,7 @@ class Rule(name: String, negate: Boolean = false) : Leaf(name, negate) {
 						return value(v)
 					}
 				}
+				statements.add("$name ends up FALSE")
 			} else
 				statements.add("$name is TRUE")
 		}
