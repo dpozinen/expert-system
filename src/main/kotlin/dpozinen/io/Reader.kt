@@ -83,7 +83,7 @@ class Reader(private val args: Array<String>) {
 	}
 
 //	TODO("Add validation checks")
-//	TODO("Solve broken refs for (A + B) | (B + C)")
+//	TODO("Solve broken refs for (A + B) | (B + C)" -- done. Test)
 	private fun parseRule(line: String): Leaf {
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
@@ -96,8 +96,7 @@ class Reader(private val args: Array<String>) {
 		} else {
 			leaf = Fact(line, line.startsWith("!"))
 		}
-		Input.leaves.add(leaf)
-		return leaf
+		return Input.leaves.getOrSave(leaf)
 	}
 
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
@@ -112,7 +111,7 @@ class Reader(private val args: Array<String>) {
 
 	private fun splitLine(line: String, symbol: Symbol): List<String> {
 		var l = line
-		if (hasNoNestedParentheses(line))
+		if (hasNoNestedBraces(line))
 			l = line.removePrefix("(").removeSuffix(")")
 
 		val indices = l.indices.filter { l[it].toString() == symbol.symbol }.toList()
@@ -124,7 +123,7 @@ class Reader(private val args: Array<String>) {
 		return emptyList()
 	}
 
-	private fun hasNoNestedParentheses(line: String) = line.matches(Regex("^\\([^()]+\\)\$"))
+	private fun hasNoNestedBraces(line: String) = line.matches(Regex("^\\([^()]+\\)\$"))
 
 	private fun split(line: String, i: Int) = listOf(line.subSequence(0, i).toString(), line.subSequence(i + 1, line.length).toString())
 
@@ -132,4 +131,13 @@ class Reader(private val args: Array<String>) {
 		return split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
 	}
 
+}
+
+private fun <E> MutableList<E>.getOrSave(leaf: E): E {
+	return if (this.contains(leaf)) {
+		this.first { it == leaf }
+	} else {
+		add(leaf)
+		leaf
+	}
 }
