@@ -11,22 +11,27 @@ import java.io.File
 class Reader(private val args: Array<String>) {
 
 	private val fileName: String = args[0]
+	private val input: Input = Input()
 
-	fun fillInput() {
+	fun read(): Input {
 		fillFlags()
-		fillFromFile()
+		fillLeaves(readFile())
+		return input
 	}
 
 	private fun fillFlags() {
-		if (args.contains("-v")) Input.verbose = true
-		if (args.contains("-raq")) Input.rulesAsQueries = true
-		if (args.contains("-fn")) Input.fullNames = true
+		if (args.contains("-v")) input.verbose = true
+		if (args.contains("-raq")) input.rulesAsQueries = true
+		if (args.contains("-fn")) input.fullNames = true
 	}
 
-	private fun fillFromFile() {
-		val lines = File(fileName).readLines()
+	private fun readFile(): List<String> {
+		return File(fileName).readLines()
 				.map { it.replace(Regex("\\s+"), "") }
 				.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
+	}
+
+	private fun fillLeaves(lines: List<String>) {
 		for (l in lines) {
 			val line = l.substringBefore("#")
 			when {
@@ -39,28 +44,26 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun makeLeavesTrue() {
-		Input.truths.forEach { truth -> Input.leaves.first { it == truth }.value = true }
+		input.truths.forEach { truth -> input.leaves.first { it == truth }.value = true }
 	}
 
 	private fun fillQueries(line: String) {
-		fillWithLeafs(line.removePrefix("?"), Input.queries)
+		fillWithLeafs(line.removePrefix("?"), input.queries)
 	}
 
 	private fun fillTruths(line: String) {
-		fillWithLeafs(line.removePrefix("="), Input.truths)
+		fillWithLeafs(line.removePrefix("="), input.truths)
 	}
 
 	private fun fillWithLeafs(line: String, target: MutableList<Leaf>) {
-		if (Input.rulesAsQueries || Input.fullNames)
-			line.split(",")
-					.forEach { addLeafToTarget(target, it) }
+		if (input.rulesAsQueries || input.fullNames)
+			line.split(",").forEach { addLeafToTarget(target, it) }
 		else
-			line.map { it.toString() }
-					.forEach { addLeafToTarget(target, it) }
+			line.map { it.toString() }.forEach { addLeafToTarget(target, it) }
 	}
 
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
-		val leaf = Input.leaves.firstOrNull { it.name == name }
+		val leaf = input.leaves.firstOrNull { it.name == name }
 		if (leaf == null) // TODO("maybe just ignore this one")
 			throw IllegalArgumentException("One of the provided targets/truths is invalid")
 		else
@@ -96,7 +99,7 @@ class Reader(private val args: Array<String>) {
 		} else {
 			leaf = Fact(line, line.startsWith("!"))
 		}
-		return Input.leaves.getOrSave(leaf)
+		return input.leaves.getOrSave(leaf)
 	}
 
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()

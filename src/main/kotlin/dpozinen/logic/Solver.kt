@@ -11,8 +11,8 @@ import dpozinen.logic.leaves.Leaf
 class Solver {
 
 	@Suppress("UnstableApiUsage")
-	fun solve(): List<Output> {
-		return Input.queries.map {
+	fun solve(input: Input): List<Output> {
+		return input.queries.map {
 			val stopwatch = Stopwatch.createStarted()
 			val statements = solveFor(it)
 			Output(statements, stopwatch.stop(), it)

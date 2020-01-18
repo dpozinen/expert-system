@@ -2,7 +2,7 @@ package dpozinen.io
 
 import dpozinen.logic.leaves.Leaf
 
-object Input {
+class Input {
 
 	var leaves = mutableListOf<Leaf>()
 	var truths = mutableListOf<Leaf>()
@@ -20,4 +20,11 @@ object Input {
 //	fun enableFullNames() { fullNames = true }
 //	fun enableRulesAsQueries() { rulesAsQueries = true }
 
+	override fun toString(): String {
+		return """
+				Found leaves: $leaves
+				Found truths: $truths
+				Found queries: $queries
+			""".trimIndent()
+	}
 }

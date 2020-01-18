@@ -8,7 +8,7 @@ import dpozinen.logic.Solver
  */
 fun main(args: Array<String>) {
 	if (args.isNotEmpty()) {
-		Reader(args).fillInput()
-		Solver().solve().forEach { print(it) }
+		val input = Reader(args).read()
+		Solver().solve(input).forEach { print(it) }
 	} else System.err.println("No file name provided")
 }
