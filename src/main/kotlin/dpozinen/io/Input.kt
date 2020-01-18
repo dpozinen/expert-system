@@ -1,8 +1,11 @@
 package dpozinen.io
 
 import dpozinen.logic.leaves.Leaf
+import java.lang.Exception
 
 class Input {
+
+	var ex : Exception? = null
 
 	var leaves = mutableListOf<Leaf>()
 	var truths = mutableListOf<Leaf>()
@@ -25,6 +28,8 @@ class Input {
 				Found leaves: $leaves
 				Found truths: $truths
 				Found queries: $queries
-			""".trimIndent()
+			   """.trimIndent()
 	}
+
+	fun hasException(): Boolean = ex != null
 }

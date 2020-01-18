@@ -10,13 +10,24 @@ import java.io.File
 
 class Reader(private val args: Array<String>) {
 
-	private val fileName: String = args[0]
+	private val fileName: String = if (args.isNotEmpty()) args[0] else ""
 	private val input: Input = Input()
 
-	fun read(): Input {
-		fillFlags()
-		fillLeaves(readFile())
+	fun read(lines: List<String>): Input {
+		try {
+			val cleanLines = lines.map { it.replace(Regex("\\s+"), "") }
+					.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
+			fillFlags()
+			fillLeaves(cleanLines)
+		} catch (ex: IllegalArgumentException) {
+			input.ex = ex
+		}
 		return input
+	}
+
+	fun read(): Input {
+		val lines = readFile()
+		return read(lines)
 	}
 
 	private fun fillFlags() {
@@ -27,8 +38,6 @@ class Reader(private val args: Array<String>) {
 
 	private fun readFile(): List<String> {
 		return File(fileName).readLines()
-				.map { it.replace(Regex("\\s+"), "") }
-				.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
 	}
 
 	private fun fillLeaves(lines: List<String>) {
@@ -63,15 +72,15 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
-		val leaf = input.leaves.firstOrNull { it.name == name }
+		val leaf = input.leaves.firstOrNull { it.toString() == name }
 		if (leaf == null) // TODO("maybe just ignore this one")
 			throw IllegalArgumentException("One of the provided targets/truths is invalid")
 		else
 			target.add(leaf)
 	}
 
-	fun addRule(line: String) {
-		if (!line.contains("=>")) throw IllegalArgumentException("Missing conclusion operator")
+	private fun addRule(line: String) {
+		if (!line.contains("=>")) throw IllegalArgumentException("Missing conclusion operator in <$line>")
 		val delim = if (line.contains(ONLYIF.symbol)) ONLYIF.symbol else IMPLIES.symbol
 
 		val before = line.substringBefore(delim)
@@ -95,6 +104,7 @@ class Reader(private val args: Array<String>) {
 				isSplittableBy(line, XOR) -> parse(leaf, line, XOR)
 				isSplittableBy(line, OR) -> parse(leaf, line, OR)
 				isSplittableBy(line, AND) -> parse(leaf, line, AND)
+				else -> throw IllegalArgumentException("An invalid Rule was provided")
 			}
 		} else {
 			leaf = Fact(line, line.startsWith("!"))
