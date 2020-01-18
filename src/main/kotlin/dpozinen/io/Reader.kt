@@ -36,9 +36,7 @@ class Reader(private val args: Array<String>) {
 		if (args.contains("-fn")) input.fullNames = true
 	}
 
-	private fun readFile(): List<String> {
-		return File(fileName).readLines()
-	}
+	private fun readFile() = if (fileName.isNotEmpty()) File(fileName).readLines() else emptyList()
 
 	private fun fillLeaves(lines: List<String>) {
 		for (l in lines) {
@@ -52,17 +50,11 @@ class Reader(private val args: Array<String>) {
 		makeLeavesTrue()
 	}
 
-	private fun makeLeavesTrue() {
-		input.truths.forEach { truth -> input.leaves.first { it == truth }.value = true }
-	}
+	private fun makeLeavesTrue() = input.truths.forEach { truth -> input.leaves.first { it == truth }.value = true }
 
-	private fun fillQueries(line: String) {
-		fillWithLeafs(line.removePrefix("?"), input.queries)
-	}
+	private fun fillQueries(line: String) = fillWithLeafs(line.removePrefix("?"), input.queries)
 
-	private fun fillTruths(line: String) {
-		fillWithLeafs(line.removePrefix("="), input.truths)
-	}
+	private fun fillTruths(line: String) = fillWithLeafs(line.removePrefix("="), input.truths)
 
 	private fun fillWithLeafs(line: String, target: MutableList<Leaf>) {
 		if (input.rulesAsQueries || input.fullNames)
@@ -94,7 +86,7 @@ class Reader(private val args: Array<String>) {
 		conclusion.leaves.add(body)
 	}
 
-//	TODO("Add validation checks")
+	//	TODO("Add validation checks")
 //	TODO("Solve broken refs for (A + B) | (B + C)" -- done. Test)
 	private fun parseRule(line: String): Leaf {
 		val leaf: Leaf
@@ -130,8 +122,7 @@ class Reader(private val args: Array<String>) {
 		val indices = l.indices.filter { l[it].toString() == symbol.symbol }.toList()
 		for (i in indices) {
 			val split = split(l, i)
-			if (isValidSplit(split))
-				return split
+			if (isValidSplit(split)) return split
 		}
 		return emptyList()
 	}
@@ -140,9 +131,7 @@ class Reader(private val args: Array<String>) {
 
 	private fun split(line: String, i: Int) = listOf(line.subSequence(0, i).toString(), line.subSequence(i + 1, line.length).toString())
 
-	private fun isValidSplit(split: List<String>): Boolean {
-		return split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
-	}
+	private fun isValidSplit(split: List<String>) = split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
 
 }
 

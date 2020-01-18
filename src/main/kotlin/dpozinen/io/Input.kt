@@ -1,11 +1,10 @@
 package dpozinen.io
 
 import dpozinen.logic.leaves.Leaf
-import java.lang.Exception
 
 class Input {
 
-	var ex : Exception? = null
+	var ex: Exception? = null
 
 	var leaves = mutableListOf<Leaf>()
 	var truths = mutableListOf<Leaf>()

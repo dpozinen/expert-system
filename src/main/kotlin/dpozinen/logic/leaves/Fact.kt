@@ -10,7 +10,7 @@ class Fact(name: String, negate: Boolean = false) : Leaf(name, negate) {
 			visited.add(this)
 			if (!value()) {
 				for (leaf in leaves) {
-					val v : Boolean = leaf.apply(visited, statements)
+					val v: Boolean = leaf.apply(visited, statements)
 					if (v) {
 						statements.add("$name ends up TRUE")
 						value = v
