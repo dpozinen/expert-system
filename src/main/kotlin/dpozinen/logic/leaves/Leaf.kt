@@ -1,12 +1,13 @@
 package dpozinen.logic.leaves
 
-import dpozinen.io.Input
-
 
 /**
  * @author dpozinen
  */
-abstract class Leaf(val name: String, var value: Boolean = false, private val negate: Boolean = false) {
+abstract class Leaf(name: String, var value: Boolean = false) {
+
+	private val negate = name.startsWith("!")
+	val name = if (name.startsWith("!")) name.removePrefix("!") else name
 	val leaves = mutableListOf<Leaf>()
 
 //	TODO("Rule#apply() and Fact#apply() are identical")
@@ -18,19 +19,19 @@ abstract class Leaf(val name: String, var value: Boolean = false, private val ne
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return other is Leaf && other.name == name
-	}
-
-	override fun toString(): String {
-		return name
+		return other is Leaf && other.name == name && other.negate == negate
 	}
 
 	override fun hashCode(): Int {
 		return name.hashCode()
 	}
 
+	override fun toString(): String {
+		return if (negate) "!$name" else name
+	}
+
 	fun logVerbose(statements: MutableList<String>) {
-		if (Input.verbose) {
+		if (false) { // TODO(fix verbose flag)
 			val leavesJoin = leaves.joinToString { " and " }
 			val statement = "For $name to be TRUE %s must be %b".format(leavesJoin, value(true))
 			statements.add(statement)
