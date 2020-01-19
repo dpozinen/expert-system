@@ -26,10 +26,11 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    implementation("org.junit.jupiter:junit-jupiter-api:5.6.0-RC1")
+
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation("com.google.guava:guava:28.1-jre")
-//    compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
-
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
