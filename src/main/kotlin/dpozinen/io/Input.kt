@@ -4,6 +4,7 @@ import dpozinen.logic.leaves.Leaf
 
 class Input {
 
+	var fullInput: String = ""
 	var ex: Exception? = null
 
 	var leaves = mutableListOf<Leaf>()
@@ -14,21 +15,7 @@ class Input {
 	var verbose: Boolean = false
 	var rulesAsQueries: Boolean = false
 
-//	fun saveLeaf(leaf: Leaf) = leaves.add(leaf)
-//	fun saveTruth(leaf: Leaf) = truths.add(leaf)
-//	fun saveQuery(leaf: Leaf) = queries.add(leaf)
-// 	TODO("figure out best way to handle openness of Input.class")
-//	fun enableVerbose() { verbose = true }
-//	fun enableFullNames() { fullNames = true }
-//	fun enableRulesAsQueries() { rulesAsQueries = true }
-
-	override fun toString(): String {
-		return """
-				Found leaves: $leaves
-				Found truths: $truths
-				Found queries: $queries
-			   """.trimIndent()
-	}
+	override fun toString(): String = fullInput
 
 	fun hasException(): Boolean = ex != null
 }

@@ -8,6 +8,7 @@ import dpozinen.logic.leaves.Rule
 import dpozinen.logic.leaves.Sign
 import java.io.File
 
+// TODO(refactor validation)
 class Reader(private val args: Array<String>) {
 
 	private val fileName: String = if (args.isNotEmpty()) args[0] else ""
@@ -17,6 +18,7 @@ class Reader(private val args: Array<String>) {
 		try {
 			val cleanLines = lines.map { it.replace(Regex("\\s+"), "") }
 					.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
+			input.fullInput = cleanLines.joinToString(" ")
 			fillFlags()
 			fillLeaves(cleanLines)
 		} catch (ex: IllegalArgumentException) {
@@ -78,16 +80,22 @@ class Reader(private val args: Array<String>) {
 		val before = line.substringBefore(delim)
 		val after = line.substringAfter(delim)
 
-		if (before.isEmpty()) throw IllegalArgumentException("Rule body is empty")
-		if (after.isEmpty()) throw IllegalArgumentException("Rule conclusion is empty")
+		if (before.isBlank()) throw IllegalArgumentException("Rule body is empty")
+		if (after.isBlank()) throw IllegalArgumentException("Rule conclusion is empty")
 
 		val body: Leaf = parseRule(before)
+		checkConclusion(after)
 		val conclusion: Leaf = parseRule(after)
 		conclusion.leaves.add(body)
 	}
 
-	//	TODO("Add validation checks")
-//	TODO("Solve broken refs for (A + B) | (B + C)" -- done. Test)
+	private fun checkConclusion(after: String) {
+		if (after.contains(Regex("[|^]")))
+			throw IllegalArgumentException("Or ans Xor in conclusions are not supported")
+		if (!after.contains("+"))
+			validateFact(after)
+	}
+
 	private fun parseRule(line: String): Leaf {
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
@@ -96,12 +104,22 @@ class Reader(private val args: Array<String>) {
 				isSplittableBy(line, XOR) -> parse(leaf, line, XOR)
 				isSplittableBy(line, OR) -> parse(leaf, line, OR)
 				isSplittableBy(line, AND) -> parse(leaf, line, AND)
-				else -> throw IllegalArgumentException("An invalid Rule was provided")
+				else -> throw IllegalArgumentException("An invalid Rule was provided: [$line]")
 			}
 		} else {
+			validateFact(line)
 			leaf = Fact(line, line.startsWith("!"))
 		}
 		return input.leaves.getOrSave(leaf)
+	}
+
+	private fun validateFact(fact: String) {
+		if (fact.count { it == '!' } >= 1)
+			throw IllegalArgumentException("Fact can't have two negate signs: [$fact]")
+		if (fact.contains(Regex("[()]")))
+			throw IllegalArgumentException("Fact can't have braces: [$fact]")
+		if (fact.contains(Regex("\\W+")))
+			throw IllegalArgumentException("Fact can't have symbols: [$fact]")
 	}
 
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
@@ -118,6 +136,8 @@ class Reader(private val args: Array<String>) {
 		var l = line
 		if (hasNoNestedBraces(line))
 			l = line.removePrefix("(").removeSuffix(")")
+		if (hasAdjacentOperators(line))
+			throw IllegalArgumentException("Found adjacent operators in <$line>")
 
 		val indices = l.indices.filter { l[it].toString() == symbol.symbol }.toList()
 		for (i in indices) {
@@ -127,11 +147,25 @@ class Reader(private val args: Array<String>) {
 		return emptyList()
 	}
 
+	private fun hasAdjacentOperators(line: String): Boolean {
+		val bothAreSymbols: (Pair<Char, Char>) -> Boolean = { p ->
+			Symbol.isSymbol(p.first.toString()) && Symbol.isSymbol(p.second.toString())
+		}
+		return line.zipWithNext().filter(bothAreSymbols).firstOrNull { it.first == it.second } != null
+	}
+
 	private fun hasNoNestedBraces(line: String) = line.matches(Regex("^\\([^()]+\\)\$"))
 
 	private fun split(line: String, i: Int) = listOf(line.subSequence(0, i).toString(), line.subSequence(i + 1, line.length).toString())
 
-	private fun isValidSplit(split: List<String>) = split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
+	private fun isValidSplit(split: List<String>): Boolean {
+		if (split.contains(""))
+			throw IllegalArgumentException("Bad Rule/Fact provided [%s]".format(split.joinToString(" ")))
+		val bracesMatch = split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
+		if (!bracesMatch)
+			throw IllegalArgumentException("Bad Braces in %s".format(split.joinToString(" ")))
+		return true
+	}
 
 }
 
