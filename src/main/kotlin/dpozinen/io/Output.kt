@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit
 class Output(
 		private val statements: List<String>,
 		private val stopwatch: Stopwatch,
-		val results: Map<String, Boolean>,
-		private val target: Leaf
+		private val target: Leaf,
+		private val results: Map<String, Boolean> = HashMap()
 ) {
 
 	fun checkResults(answers: Map<String, Boolean>) {
