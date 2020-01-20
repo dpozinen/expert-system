@@ -8,6 +8,7 @@ import dpozinen.io.Reader
 import dpozinen.logic.Solver
 import org.junit.jupiter.api.assertAll
 import java.io.File
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -23,9 +24,7 @@ class ExpertTest {
 
 	@Test
 	fun bad() {
-		val list: List<() -> Unit> = getFiles(Regex("bad_files")).first()
-				.walk()
-				.filter { !it.isDirectory }
+		val list: List<() -> Unit> = getFiles(Regex("bad_files"))
 				.map { solve(it) }
 				.map { { assertTrue(it.hasException(), "Exception on Input $it") } }
 				.toList()
@@ -34,16 +33,21 @@ class ExpertTest {
 
 	@Test
 	fun and() {
-		getFiles(Regex(".*and.*")).filter { !it.isDirectory }.forEach { solve(it) }
+		getFiles(Regex(".*and.*")).forEach { solve(it) }
 	}
 
-	private fun getFiles(regex: Regex, path: String = "C:\\Users\\Dariy\\Documents\\Code\\expert-system\\src\\test\\resources\\"): List<File> {
-		return File(path).walk().filter { it.name.matches(regex) }.toList()
+	private val pathToResources = Paths.get("").toAbsolutePath().toString() + "\\src\\test\\resources\\"
+	private fun getFiles(regex: Regex, path: String = pathToResources): List<String> {
+		return File(path).walk()
+				.filter { it.name.matches(regex) }
+				.filter { it.isFile }
+				.map { it.absolutePath }
+				.toList()
 	}
 
-	private fun solve(file: File): Input {
-		print("Solving %s%n".format(file.absolutePath))
-		val input = Reader(arrayOf(file.absolutePath)).read()
+	private fun solve(file: String): Input {
+		print("Solving %s%n".format(file))
+		val input = Reader(arrayOf(file)).read()
 		solve(input)
 		print("----------------------\n\n")
 		return input
