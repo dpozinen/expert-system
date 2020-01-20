@@ -16,7 +16,7 @@ class ExpertTest {
 	@Test
 	fun custom() {
 		val lines = """
-        A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A+A=>C =A
+        
 	    """.trimIndent().split("\n")
 		val input = Reader(emptyArray()).read(lines)
 		solve(input)
@@ -26,7 +26,7 @@ class ExpertTest {
 	fun bad() {
 		val list: List<() -> Unit> = getFiles(Regex("bad_files"))
 				.map { solve(it) }
-				.map { { assertTrue(it.hasException(), "Exception on Input $it") } }
+				.map { { assertTrue(it.hasException(), "No Exception on Input $it") } }
 				.toList()
 		assertAll(list)
 	}
@@ -38,10 +38,11 @@ class ExpertTest {
 
 	private val pathToResources = Paths.get("").toAbsolutePath().toString() + "\\src\\test\\resources\\"
 	private fun getFiles(regex: Regex, path: String = pathToResources): List<String> {
-		return File(path).walk()
-				.filter { it.name.matches(regex) }
+		return File(path).walk().filter { it.name.matches(regex) }
+				.flatMap { f -> f.walk().asSequence() }
 				.filter { it.isFile }
 				.map { it.absolutePath }
+				.toSet()
 				.toList()
 	}
 
