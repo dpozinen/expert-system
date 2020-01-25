@@ -54,6 +54,13 @@ class Reader(private val args: Array<String>) {
 		makeLeavesTrue()
 	}
 
+	private fun fillAnswers(line: String) {
+		input.answers =
+				line.removePrefix("|").split("|")
+						.map { Pair(it.substringBefore("="), it.substringBefore("=").toBoolean()) }
+						.toMap()
+	}
+
 	private fun makeLeavesTrue() = input.truths.forEach { truth -> input.leaves.first { it == truth }.value = true }
 
 	private fun fillQueries(line: String) = fillWithLeafs(line.removePrefix("?"), input.queries)

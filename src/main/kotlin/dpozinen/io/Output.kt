@@ -19,6 +19,6 @@ class Output(
 	}
 
 	override fun toString(): String {
-		return "Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} seconds:%n${statements.joinToString("\n")}%n"
+		return "Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:%n${statements.joinToString("\n")}%n"
 	}
 }

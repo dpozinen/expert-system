@@ -4,7 +4,7 @@ import dpozinen.logic.leaves.Leaf
 
 class Input {
 
-	val correctAnswer: Map<String, Boolean> = HashMap()
+	var answers: Map<String, Boolean> = HashMap()
 
 	var fullInput: String = ""
 	var ex: Exception? = null
