@@ -4,9 +4,9 @@ package dpozinen.logic.leaves
 /**
  * @author dpozinen
  */
-abstract class Leaf(name: String, var value: Boolean = false) {
+// TODO(move value from base)
+abstract class Leaf(name: String, private val negate: Boolean = name.startsWith("!"), var value: Boolean = false) {
 
-	private val negate = name.startsWith("!")
 	val name = if (name.startsWith("!")) name.removePrefix("!") else name
 	val leaves = mutableListOf<Leaf>()
 
@@ -27,7 +27,7 @@ abstract class Leaf(name: String, var value: Boolean = false) {
 	fun logVerbose(statements: MutableList<String>) {
 		if (false) { // TODO(fix verbose flag)
 			val leavesJoin = leaves.joinToString { " and " }
-			val statement = "For $name to be TRUE %s must be %b".format(leavesJoin, value(true))
+			val statement = "For $this to be TRUE %s must be %b".format(leavesJoin, value(true))
 			statements.add(statement)
 		}
 	}

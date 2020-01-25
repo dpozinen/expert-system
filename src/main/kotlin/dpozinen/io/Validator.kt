@@ -25,12 +25,19 @@ class Validator {
 	}
 
 	fun checkFact(fact: String) {
-		if (fact.count { it == '!' } >= 1)
-			throw IllegalArgumentException("Fact can't have two negate signs: [$fact]")
-		if (fact.contains(Regex("[()]")))
-			throw IllegalArgumentException("Fact can't have braces: [$fact]")
-		if (fact.contains(Regex("\\W+")))
+//		if (fact.count { it == '!' } > 1)
+//			throw IllegalArgumentException("Fact can't have two negate signs: [$fact]")
+		checkBraces(fact)
+		if (fact.replace(Regex("[()!]"), "").contains(Regex("\\W+")))
 			throw IllegalArgumentException("Fact can't have symbols: [$fact]")
+	}
+
+	private fun checkBraces(fact: String) {
+		val braceCountEqual = fact.count { it == ')' } == fact.count { it == '(' }
+		if (!braceCountEqual)
+			throw IllegalArgumentException("Fact brace count doesn't match: [$fact]")
+		if (fact.contains(Regex("[()]")) && !fact.matches(Regex("!?\\(+\\w\\)+")))
+			throw IllegalArgumentException("Fact brace position is not valid: [$fact]")
 	}
 
 	fun checkAdjacentOperators(line: String) {
@@ -46,10 +53,7 @@ class Validator {
 	fun isValidSplit(split: List<String>): Boolean {
 		if (split.contains(""))
 			throw IllegalArgumentException("Bad Rule/Fact provided [%s]".format(split.joinToString(" ")))
-		val bracesMatch = split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
-		if (!bracesMatch)
-			throw IllegalArgumentException("Bad Braces in %s".format(split.joinToString(" ")))
-		return true
+		return split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
 	}
 
 }

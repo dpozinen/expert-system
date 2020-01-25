@@ -77,7 +77,7 @@ class Reader(private val args: Array<String>) {
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
 		val leaf = input.leaves.firstOrNull { it.toString() == name }
 		if (leaf == null) // TODO("maybe just ignore this one")
-			throw IllegalArgumentException("One of the provided targets/truths is invalid")
+//			throw IllegalArgumentException("One of the provided targets/truths is invalid")
 		else
 			target.add(leaf)
 	}
@@ -100,23 +100,68 @@ class Reader(private val args: Array<String>) {
 	private fun parseRule(line: String): Leaf {
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
-			leaf = Rule(line, line.startsWith(NOT.symbol)) // TODO("make true only for braces")
+			leaf = Rule(line) // TODO("make true only for braces")
 			when {
 				isSplittableBy(line, XOR) -> parse(leaf, line, XOR)
 				isSplittableBy(line, OR) -> parse(leaf, line, OR)
 				isSplittableBy(line, AND) -> parse(leaf, line, AND)
+				isBraceWrapping(line) -> parse(leaf, line)
 				else -> throw IllegalArgumentException("An invalid Rule was provided: [$line]")
 			}
 		} else {
+			leaf = Fact(line)
+			if (isBraceWrapping(line))
+				parse(leaf, line)
 			validator.checkFact(line)
-			leaf = Fact(line, line.startsWith("!"))
 		}
 		return input.leaves.getOrSave(leaf)
 	}
 
+	private fun isBraceWrapping(line: String): Boolean {
+		if (line.contains(Regex("[|^+]"))) {
+			var l = line.removePrefix("!")
+			if (l.startsWith("(")) {
+				while (isNotSplittableByOperator(l) && l.removePrefix("!").startsWith("("))
+					l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
+				return !isNotSplittableByOperator(l)
+			}
+			return false
+		} else {
+			var l = line.removePrefix("!")
+			if (l.startsWith("(")) {
+				while (l.removePrefix("!").startsWith("("))
+					l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
+				try {
+					validator.checkFact(l)
+				} catch (e: IllegalArgumentException) {
+					return false
+				}
+				return true
+			}
+			return false
+		}
+	}
+
+	private fun isNotSplittableByOperator(l: String) = Symbol.operators().none { isSplittableBy(l, it) }
+
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
 
-	private fun parse(rule: Rule, line: String, symbol: Symbol) {
+	private fun parse(rule: Leaf, line: String): Leaf {
+		if (isNotSplittableByOperator(line)) {
+
+//			val negate = line.startsWith("!")
+			val inside = line.removePrefix("!").removePrefix("(").removeSuffix(")")
+//			inside = when {negate -> "!$inside" else -> inside}
+			rule.leaves.add(parseRule(inside))
+		} else when {
+			isSplittableBy(line, XOR) -> parse(rule, line, XOR)
+			isSplittableBy(line, OR) -> parse(rule, line, OR)
+			isSplittableBy(line, AND) -> parse(rule, line, AND)
+		}
+		return rule
+	}
+
+	private fun parse(rule: Leaf, line: String, symbol: Symbol) {
 		val sign = Sign(symbol)
 		rule.leaves.add(sign)
 

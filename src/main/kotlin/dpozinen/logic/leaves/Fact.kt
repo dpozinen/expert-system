@@ -3,7 +3,7 @@ package dpozinen.logic.leaves
 /**
  * @author dpozinen
  */
-class Fact(name: String, negate: Boolean = false) : Leaf(name, negate) {
+class Fact(name: String) : Leaf(name) {
 
 	override fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean {
 		if (!visited.contains(this)) {
@@ -12,14 +12,14 @@ class Fact(name: String, negate: Boolean = false) : Leaf(name, negate) {
 				for (leaf in leaves) {
 					val v: Boolean = leaf.apply(visited, statements)
 					if (v) {
-						statements.add("$name ends up TRUE")
+						statements.add("$this ends up TRUE")
 						value = v
 						return value(v)
 					}
 				}
-				statements.add("$name is FALSE")
+				statements.add("$this is FALSE")
 			} else
-				statements.add("$name is TRUE")
+				statements.add("$this is TRUE")
 		}
 		return value()
 	}
