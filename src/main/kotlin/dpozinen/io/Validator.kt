@@ -36,8 +36,8 @@ class Validator {
 		val braceCountEqual = fact.count { it == ')' } == fact.count { it == '(' }
 		if (!braceCountEqual)
 			throw IllegalArgumentException("Fact brace count doesn't match: [$fact]")
-		if (fact.contains(Regex("[()]")) && !fact.matches(Regex("!?\\(+\\w\\)+")))
-			throw IllegalArgumentException("Fact brace position is not valid: [$fact]")
+//		if (fact.contains(Regex("[()]")) && !fact.matches(Regex("!?\\(+\\w\\)+")))
+//			throw IllegalArgumentException("Fact brace position is not valid: [$fact]")
 	}
 
 	fun checkAdjacentOperators(line: String) {

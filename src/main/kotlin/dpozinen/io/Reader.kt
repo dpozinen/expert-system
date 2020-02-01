@@ -146,6 +146,12 @@ class Reader(private val args: Array<String>) {
 
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
 
+	private fun parse(rule: Fact, line: String): Leaf {
+		val inside = line.removePrefix("!").removePrefix("(").removeSuffix(")")
+		rule.leaves.add(parseRule(inside))
+		return rule
+	}
+
 	private fun parse(rule: Leaf, line: String): Leaf {
 		if (isNotSplittableByOperator(line)) {
 
