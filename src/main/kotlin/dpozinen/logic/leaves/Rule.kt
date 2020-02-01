@@ -3,25 +3,27 @@ package dpozinen.logic.leaves
 /**
  * @author dpozinen
  */
-class Rule(name: String) : Leaf(name) {
+class Rule(name: String, negate: Boolean, private var isUndefined: Boolean = true) : Leaf(name, negate) {
 
 	override fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean {
 		if (!visited.contains(this)) {
 			visited.add(this)
-			if (!value()) {
+			logVerbose(statements)
+			if (!visited.containsAll(leaves[0].leaves)) {
 				for (leaf in leaves) {
 					val v: Boolean = leaf.apply(visited, statements)
-					if (v) {
-						statements.add("$this is TRUE")
+					if (super.value(v)) {
 						value = v
-						return value(v)
+						isUndefined = false
 					}
 				}
-				statements.add("$this ends up FALSE")
-			} else
-				statements.add("$this is TRUE")
+			}
+			statements.add("$this is ${value()}")
 		}
 		return value()
 	}
 
+	override fun formLeafsLog(): String {
+		return this.toString()
+	}
 }

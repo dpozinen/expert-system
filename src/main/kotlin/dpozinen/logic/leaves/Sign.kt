@@ -21,4 +21,16 @@ class Sign(private val symbol: Symbol, name: String = symbol.name) : Leaf(name) 
 		}
 	}
 
+	override fun formLeafsLog(): String {
+		return super.formMsg(toString())
+	}
+
+	override fun toString(): String {
+		return when (this.symbol) {
+			Symbol.AND -> "and"
+			Symbol.XOR -> "and"
+			Symbol.OR -> "or"
+			else -> ""
+		}
+	}
 }
