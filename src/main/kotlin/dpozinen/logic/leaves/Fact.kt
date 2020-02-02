@@ -8,8 +8,8 @@ class Fact(name: String) : Leaf(name) {
 	override fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean {
 		if (!visited.contains(this)) {
 			visited.add(this)
-			logVerbose(statements)
-			if (!visited.containsAll(leaves)) {
+			if (!value()) {
+				logVerbose(statements)
 				for (leaf in leaves) {
 					val v: Boolean = leaf.apply(visited, statements)
 					if (v) {

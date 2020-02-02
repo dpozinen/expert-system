@@ -1,7 +1,5 @@
 package dpozinen.logic.leaves
 
-import dpozinen.logic.Symbol
-
 
 /**
  * @author dpozinen
@@ -12,7 +10,6 @@ abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), va
 	val name = if (name.startsWith("!")) name.removePrefix("!") else name
 	val leaves = mutableListOf<Leaf>()
 
-	//	TODO("Rule#apply() and Fact#apply() are identical")
 	abstract fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean
 	abstract fun formLeafsLog(): String
 
@@ -23,9 +20,9 @@ abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), va
 
 	override fun equals(other: Any?) = other is Leaf && other.name == name && other.negate == negate
 
-	override fun hashCode(): Int = name.hashCode()
+	override fun hashCode() = name.hashCode()
 
-	override fun toString(): String = if (negate) "!$name" else name
+	override fun toString() = if (negate) "!$name" else name
 
 	fun logVerbose(statements: MutableList<String>) {
 		if (leaves.isNotEmpty()) {
@@ -35,7 +32,11 @@ abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), va
 	}
 
 	fun formMsg(joiner: String = ""): String {
-		return leaves.map { it.formLeafsLog() }.toList().joinToString(" ${joiner.toLowerCase()} ")
+		return if (joiner == "xor") {
+			leaves.map { it.formLeafsLog() }.toList().joinToString(" ${"or".toLowerCase()} ") + "(but not both)"
+		} else {
+			leaves.map { it.formLeafsLog() }.toList().joinToString(" ${joiner.toLowerCase()} ")
+		}
 	}
 
 }
