@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("UnstableApiUsage")
 class Output(
+		private val input: Input,
 		private val statements: List<String>,
 		private val stopwatch: Stopwatch,
 		private val target: Leaf,
@@ -19,10 +20,10 @@ class Output(
 	}
 
 	override fun toString(): String {
-		return """
-			Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
+		return if (input.verbose)
+			"""Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
 			${statements.joinToString("\n")}
-
-		""".trimIndent()
+			""".trimIndent()
+		else statements.last() + "\n"
 	}
 }
