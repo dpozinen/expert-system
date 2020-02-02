@@ -15,7 +15,7 @@ class Solver {
 		return input.queries.map {
 			val stopwatch = Stopwatch.createStarted()
 			val statements = solveFor(it)
-			Output(statements, stopwatch.stop(), it)
+			Output(input, statements, stopwatch.stop(), it)
 		}.toList()
 	}
 
