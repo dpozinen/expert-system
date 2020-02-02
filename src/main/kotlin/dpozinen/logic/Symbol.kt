@@ -6,9 +6,15 @@ package dpozinen.logic
 enum class Symbol(val symbol: String) {
 	IS("."),
 	NOT("!"),
-	AND("+"),
-	OR("|"),
-	XOR("^"),
+	AND("+") {
+		override fun toString() = "and"
+	},
+	OR("|") {
+		override fun toString() = "or"
+	},
+	XOR("^") {
+		override fun toString() = "xor"
+	},
 	IMPLIES("=>"),
 	ONLYIF("<=>");
 
