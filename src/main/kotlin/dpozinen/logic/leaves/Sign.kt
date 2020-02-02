@@ -8,11 +8,16 @@ import dpozinen.logic.Symbol
 class Sign(private val symbol: Symbol, name: String = symbol.name) : Leaf(name) {
 
 	override fun apply(visited: MutableList<Leaf>, statements: MutableList<String>): Boolean {
-		val leafValues = leaves.map { it.apply(visited, statements) }.toList()
+		val leafValues = mutableListOf<Boolean>()
+		for (leaf in leaves) {
+			val res = leaf.apply(visited, statements)
+			leafValues.add(res)
+			if (symbol == Symbol.OR && res) return true
+		}
 		return applySymbol(symbol, leafValues)
 	}
 
-	private fun applySymbol(symbol: Symbol, leafValues: List<Boolean>): Boolean {
+	private fun applySymbol(symbol: Symbol, leafValues: MutableList<Boolean>): Boolean {
 		return when (symbol) {
 			Symbol.AND -> leafValues.all { it }
 			Symbol.OR -> leafValues.any { it }
