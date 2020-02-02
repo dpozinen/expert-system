@@ -52,10 +52,9 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun fillAnswers(line: String) {
-		input.answers =
-				line.removePrefix("|").split("|")
-						.map { Pair(it.substringBefore("="), it.substringBefore("=").toBoolean()) }
-						.toMap()
+		input.answers = line.removePrefix("|").split("|")
+							.map { Pair(it.substringBefore("="), it.substringBefore("=").toBoolean()) }
+							.toMap()
 	}
 
 	private fun makeLeavesTrue() = input.truths.forEach { truth -> input.leaves.first { it == truth }.value = true }
@@ -94,10 +93,20 @@ class Reader(private val args: Array<String>) {
 		validator.checkConclusion(after)
 		val conclusion: Leaf = parser.parseRule(after)
 
+		resolveConclusionLinks(conclusion, body, delim)
+	}
+
+	private fun resolveConclusionLinks(conclusion: Leaf, body: Leaf, delim: String) {
 		if (conclusion is Rule)
-			conclusion.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(body) } }
+			conclusion.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(conclusion) } }
 		else
 			conclusion.leaves.add(body)
+		if (delim == ONLYIF.symbol) {
+			if (body is Rule)
+				body.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(conclusion) } }
+			else
+				body.leaves.add(conclusion)
+		}
 	}
 
 }
