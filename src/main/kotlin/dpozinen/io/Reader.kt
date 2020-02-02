@@ -3,6 +3,7 @@ package dpozinen.io
 import dpozinen.logic.Symbol.IMPLIES
 import dpozinen.logic.Symbol.ONLYIF
 import dpozinen.logic.leaves.Leaf
+import dpozinen.logic.leaves.Rule
 import java.io.File
 
 class Reader(private val args: Array<String>) {
@@ -92,7 +93,11 @@ class Reader(private val args: Array<String>) {
 		val body: Leaf = parser.parseRule(before)
 		validator.checkConclusion(after)
 		val conclusion: Leaf = parser.parseRule(after)
-		conclusion.leaves.add(body)
+
+		if (conclusion is Rule)
+			conclusion.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(body) } }
+		else
+			conclusion.leaves.add(body)
 	}
 
 }
