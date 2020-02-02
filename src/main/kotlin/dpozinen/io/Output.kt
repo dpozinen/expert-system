@@ -20,10 +20,10 @@ class Output(
 	}
 
 	override fun toString(): String {
-		return if (input.verbose)
+		return if (input.verbose) {
 			"""Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
-			${statements.joinToString("\n")}
-			""".trimIndent()
-		else statements.last() + "\n"
+				|${statements.joinToString("\n")}
+			""".trimMargin()
+		} else statements.last() + "\n"
 	}
 }
