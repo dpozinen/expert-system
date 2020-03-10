@@ -44,7 +44,8 @@ class Validator {
 		val bothAreSymbols: (Pair<Char, Char>) -> Boolean = { p ->
 			Symbol.isSymbol(p.first.toString()) && Symbol.isSymbol(p.second.toString())
 		}
-		val hasAdjacentOperators =  line.zipWithNext().filter(bothAreSymbols).firstOrNull { it.first == it.second } != null
+		val hasAdjacentOperators = line.zipWithNext().filter(bothAreSymbols)
+				.firstOrNull { Symbol.isOperator(it.first) && Symbol.isOperator(it.second) } != null
 
 		if (hasAdjacentOperators)
 			throw IllegalArgumentException("Found adjacent operators in <$line>")
