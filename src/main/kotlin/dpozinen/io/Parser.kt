@@ -5,6 +5,8 @@ import dpozinen.logic.leaves.Fact
 import dpozinen.logic.leaves.Leaf
 import dpozinen.logic.leaves.Rule
 import dpozinen.logic.leaves.Sign
+import java.lang.Exception
+import kotlin.reflect.KFunction1
 
 /**
  * @author dpozinen
@@ -14,88 +16,73 @@ class Parser(private val input: Input) {
 	private val validator: Validator = Validator()
 
 	fun parseRule(line: String): Leaf {
+		validator.preCheckRule(line);
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
-			leaf = Rule(line, line.startsWith("!") && isBraceWrapping(line)) // TODO("make true only for braces")
+			leaf = Rule(line, line.startsWith("!") && isBraceWrapping(line, ::isNotSplittableByAnyOperator)) // TODO("make true only for braces")
 			when {
 				isSplittableBy(line, Symbol.XOR) -> parse(leaf, line, Symbol.XOR)
 				isSplittableBy(line, Symbol.OR) -> parse(leaf, line, Symbol.OR)
 				isSplittableBy(line, Symbol.AND) -> parse(leaf, line, Symbol.AND)
-				isBraceWrapping(line) -> parse(leaf, line)
+				isBraceWrapping(line, ::isNotSplittableByAnyOperator) -> leaf.leaves.add(parseRule(removeBraceWrapping(line)))
 				else -> throw IllegalArgumentException("An invalid Rule was provided: [$line]")
 			}
 		} else {
 			leaf = Fact(line)
-			if (isBraceWrapping(line))
-				parse(leaf, line)
+			if (line.contains("(").or(line.contains(")")) && isBraceWrapping(line, ::isInvalidFact))
+				leaf.leaves.add(parseRule(removeBraceWrapping(line)))
 			validator.checkFact(line)
 		}
 		return input.leaves.getOrSave(leaf)
 	}
 
-	private fun isBraceWrapping(line: String): Boolean {
-		if (line.contains(Regex("[|^+]"))) {
-			var l = line.removePrefix("!") // TODO(can't just remove ! straight off)
-			if (l.startsWith("(") && isNotSplittableByOperator(l)) {
-				while (isNotSplittableByOperator(l) && l.removePrefix("!").startsWith("("))
-					l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
-				return !isNotSplittableByOperator(l)
-			}
-			return false
-		} else {
-			var l = line.removePrefix("!")
-			if (l.startsWith("(")) {
-				while (l.removePrefix("!").startsWith("("))
-					l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
-				try {
-					validator.checkFact(l)
-				} catch (e: IllegalArgumentException) {
-					return false
-				}
-				return true
-			}
-			return false
+	private fun isInvalidFact(line: String): Boolean {
+		return try {
+			validator.checkFact(line)
+			false
+		} catch (ex: Exception) {
+			true
 		}
 	}
 
-	private fun isNotSplittableByOperator(l: String) = Symbol.operators().none { isSplittableBy(l, it) }
+	private fun removeBraceWrapping(line: String): String {
+		var l = line.removePrefix("!")
+
+		do l = l.removePrefix("(").removeSuffix(")")
+		while (l.startsWith("("))
+
+		return l
+	}
+
+	private fun isBraceWrapping(line: String, f: KFunction1<String, Boolean>): Boolean {
+		if (line.contains("(").or(line.contains(")"))) {
+			var l = line
+
+			do l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
+			while (f.invoke(l) && (l.startsWith("!").or(l.startsWith("("))))
+
+			return !f.invoke(l)
+		}
+		return false
+	}
+
+	private fun isNotSplittableByAnyOperator(line: String) = Symbol.operators().none { isSplittableBy(line, it) }
 
 	private fun isSplittableBy(line: String, symbol: Symbol) = line.contains(symbol.symbol) && splitLine(line, symbol).isNotEmpty()
 
-	private fun parse(rule: Fact, line: String): Leaf {
-		val inside = line.removePrefix("!").removePrefix("(").removeSuffix(")")
-		rule.leaves.add(parseRule(inside))
-		return rule
-	}
-
-	private fun parse(rule: Leaf, line: String): Leaf {
-		if (isNotSplittableByOperator(line)) {
-
-//			val negate = line.startsWith("!")
-			val inside = line.removePrefix("!").removePrefix("(").removeSuffix(")")
-//			inside = when {negate -> "!$inside" else -> inside}
-			rule.leaves.add(parseRule(inside))
-		} else when {
-			isSplittableBy(line, Symbol.XOR) -> parse(rule, line, Symbol.XOR)
-			isSplittableBy(line, Symbol.OR) -> parse(rule, line, Symbol.OR)
-			isSplittableBy(line, Symbol.AND) -> parse(rule, line, Symbol.AND)
-		}
-		return rule
-	}
-
-	private fun parse(rule: Leaf, line: String, symbol: Symbol) {
+	private fun parse(rule: Rule, line: String, symbol: Symbol) {
 		val sign = Sign(symbol)
 		rule.leaves.add(sign)
 
 		val split = splitLine(line, symbol)
-		sign.leaves.addAll(split.map { parseRule(it) }.toList())
+		val leavesOfRule = split.map { parseRule(it) }.toList()
+		sign.leaves.addAll(leavesOfRule)
 	}
 
 	private fun splitLine(line: String, symbol: Symbol): List<String> {
 		var l = line
 		if (hasNoNestedBraces(line))
 			l = line.removePrefix("(").removeSuffix(")")
-		validator.checkAdjacentOperators(line)
 
 		val indices = l.indices.filter { l[it].toString() == symbol.symbol }.toList()
 		for (i in indices) {

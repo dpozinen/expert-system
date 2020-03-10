@@ -12,13 +12,14 @@ class Rule(name: String, negate: Boolean, private var isUndefined: Boolean = tru
 				logVerbose(statements)
 				for (leaf in leaves) {
 					val v: Boolean = leaf.apply(visited, statements)
+					value = v
+					isUndefined = false
 					if (super.value(v)) {
 						value = v
-						isUndefined = false
 					}
 				}
 			}
-			statements.add("$this is ${value()}")
+			statements.add("$this is ${if (isUndefined) "is undefined, defaulting to false" else value()}")
 		}
 		return value()
 	}

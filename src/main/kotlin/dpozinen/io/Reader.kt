@@ -73,7 +73,7 @@ class Reader(private val args: Array<String>) {
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
 		val leaf = input.leaves.firstOrNull { it.toString() == name }
 		if (leaf == null) // TODO("maybe just ignore this one")
-//			throw IllegalArgumentException("One of the provided targets/truths is invalid")
+			throw IllegalArgumentException("One of the provided targets/truths is invalid")
 		else
 			target.add(leaf)
 	}

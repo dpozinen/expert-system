@@ -25,19 +25,15 @@ class Validator {
 	}
 
 	fun checkFact(fact: String) {
-//		if (fact.count { it == '!' } > 1)
-//			throw IllegalArgumentException("Fact can't have two negate signs: [$fact]")
 		checkBraces(fact)
 		if (fact.replace(Regex("[()!]"), "").contains(Regex("\\W+")))
 			throw IllegalArgumentException("Fact can't have symbols: [$fact]")
 	}
 
 	private fun checkBraces(fact: String) {
-		val braceCountEqual = fact.count { it == ')' } == fact.count { it == '(' }
+		val braceCountEqual = hasSameOpenCloseBraceCount(fact)
 		if (!braceCountEqual)
 			throw IllegalArgumentException("Fact brace count doesn't match: [$fact]")
-//		if (fact.contains(Regex("[()]")) && !fact.matches(Regex("!?\\(+\\w\\)+")))
-//			throw IllegalArgumentException("Fact brace position is not valid: [$fact]")
 	}
 
 	fun checkAdjacentOperators(line: String) {
@@ -54,7 +50,22 @@ class Validator {
 	fun isValidSplit(split: List<String>): Boolean {
 		if (split.contains(""))
 			throw IllegalArgumentException("Bad Rule/Fact provided [%s]".format(split.joinToString(" ")))
-		return split.all { it.count { c -> c == '(' } - it.count { c -> c == ')' } == 0 }
+		return split.all { hasSameOpenCloseBraceCount(it) }
+	}
+
+	private fun hasSameOpenCloseBraceCount(s: String) = s.count { c -> c == '(' } - s.count { c -> c == ')' } == 0
+
+	fun preCheckRule(line: String) {
+		if (!hasSameOpenCloseBraceCount(line))
+			throw IllegalArgumentException("Open and Close brace count is not equal on line: $line")
+
+		if (line.contains(Regex("\\(\\s*\\)")))
+			throw IllegalArgumentException("Empty statement found: $line")
+
+		if (line.contains(Regex("\\w!+\\w")))
+			throw IllegalArgumentException("Invalid negation found: $line")
+
+		checkAdjacentOperators(line)
 	}
 
 }
