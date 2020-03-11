@@ -5,7 +5,7 @@ package dpozinen.logic.leaves
  * @author dpozinen
  */
 // TODO(move value from base)
-abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), var value: Boolean = false) {
+abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), var value: Boolean = false, var isUndefined: Boolean = true) {
 
 	val name = if (name.startsWith("!")) name.removePrefix("!") else name
 	val leaves = mutableListOf<Leaf>()
@@ -20,7 +20,7 @@ abstract class Leaf(name: String, val negate: Boolean = name.startsWith("!"), va
 
 	override fun equals(other: Any?) = other is Leaf && other.name == name && other.negate == negate
 
-	override fun hashCode() = name.hashCode()
+	override fun hashCode() = toString().hashCode()
 
 	override fun toString() = if (negate) "!$name" else name
 

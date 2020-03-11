@@ -97,7 +97,7 @@ class Reader(private val args: Array<String>) {
 
 	private fun resolveConclusionLinks(conclusion: Leaf, body: Leaf, delim: String) {
 		if (conclusion is Rule)
-			conclusion.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(conclusion) } }
+			conclusion.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(body) } }
 		else
 			conclusion.leaves.add(body)
 		if (delim == ONLYIF.symbol) {
