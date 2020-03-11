@@ -21,9 +21,14 @@ class Output(
 
 	override fun toString(): String {
 		return if (input.quite) {
+			if (statements.isNotEmpty())
+				statements.last() + "\n"
+			else
+				"Could not find solution"
+		} else {
 			"""Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
 				|${statements.joinToString("\n")}
 			""".trimMargin()
-		} else statements.last() + "\n"
+		}
 	}
 }
