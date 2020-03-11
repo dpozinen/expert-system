@@ -31,7 +31,7 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun fillFlags() {
-		if (args.contains("-q")) input.quite = true
+		if (args.contains("-q")) input.quiet = true
 		if (args.contains("-fn")) input.fullNames = true
 	}
 

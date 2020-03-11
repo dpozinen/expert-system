@@ -20,7 +20,7 @@ class Output(
 	}
 
 	override fun toString(): String {
-		return if (input.quite) {
+		return if (input.quiet) {
 			if (statements.isNotEmpty())
 				statements.last() + "\n"
 			else

@@ -14,7 +14,7 @@ class Input {
 	var queries = mutableListOf<Leaf>()
 
 	var fullNames: Boolean = false
-	var quite: Boolean = false
+	var quiet: Boolean = false
 
 	override fun toString(): String = fullInput
 
