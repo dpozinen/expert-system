@@ -16,7 +16,7 @@ class Parser(private val input: Input) {
 	private val validator: Validator = Validator()
 
 	fun parseRule(line: String): Leaf {
-		validator.preCheckRule(line);
+		validator.preCheckRule(line)
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
 			leaf = Rule(line, line.startsWith("!") && isBraceWrapping(line, ::isNotSplittableByAnyOperator))
@@ -25,11 +25,11 @@ class Parser(private val input: Input) {
 				isSplittableBy(line, Symbol.OR) -> parse(leaf, line, Symbol.OR)
 				isSplittableBy(line, Symbol.AND) -> parse(leaf, line, Symbol.AND)
 				isBraceWrapping(line, ::isNotSplittableByAnyOperator) -> leaf.leaves.add(parseRule(removeBraceWrapping(line)))
-				else -> throw IllegalArgumentException("An invalid Rule was provided: [$line]")
+				else -> throw IllegalArgumentException("An invalid Rule was provided: $line")
 			}
 		} else {
 			leaf = Fact(line)
-			if (line.contains("(").or(line.contains(")")) && isBraceWrapping(line, ::isInvalidFact))
+			if (isBraceWrapping(line, ::isInvalidFact))
 				leaf.leaves.add(parseRule(removeBraceWrapping(line)))
 			validator.checkFact(line)
 		}

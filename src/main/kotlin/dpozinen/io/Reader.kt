@@ -72,7 +72,7 @@ class Reader(private val args: Array<String>) {
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
 		val leaf = input.leaves.firstOrNull { it.name == name }
 		if (leaf == null) // TODO("maybe just ignore this one")
-			throw IllegalArgumentException("One of the provided targets/truths is invalid")
+			throw IllegalArgumentException("The provided target/truth is invalid: $name")
 		else
 			target.add(leaf)
 	}
@@ -102,7 +102,7 @@ class Reader(private val args: Array<String>) {
 			conclusion.leaves.add(body)
 		if (delim == ONLYIF.symbol) {
 			if (hasXor(body))
-				throw IllegalArgumentException("XORs with only-if conclusions are not permitted")
+				throw IllegalArgumentException("XORs with only-if conclusions are not permitted: $body")
 			if (body is Rule)
 				body.leaves.forEach { it.leaves.forEach { c -> c.leaves.add(conclusion) } }
 			else

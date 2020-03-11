@@ -9,7 +9,7 @@ import dpozinen.logic.Symbol
 class Validator {
 
 	fun checkConclusionOperator(line:String) {
-		if (!line.contains("=>")) throw IllegalArgumentException("Missing conclusion operator in <$line>")
+		if (!line.contains("=>")) throw IllegalArgumentException("Missing conclusion operator: $line")
 	}
 
 	fun checkBeforeAndAfter(before: String, after:String) {
@@ -19,21 +19,24 @@ class Validator {
 
 	fun checkConclusion(after: String) {
 		if (after.contains(Regex("[|^]")))
-			throw IllegalArgumentException("Or ans Xor in conclusions are not supported")
+			throw IllegalArgumentException("Or ans Xor in conclusions are not supported: $after")
 		if (!after.contains("+"))
 			checkFact(after)
 	}
 
 	fun checkFact(fact: String) {
 		checkBraces(fact)
-		if (fact.replace(Regex("[()!]"), "").contains(Regex("\\W+")))
+		val cleanFact = fact.replace(Regex("[()!]"), "")
+		if (cleanFact.contains(Regex("\\W+")))
 			throw IllegalArgumentException("Fact can't have symbols: [$fact]")
+		if (cleanFact.length != 1)
+			throw IllegalArgumentException("Invalid fact name: [$fact]")
 	}
 
 	private fun checkBraces(fact: String) {
 		val braceCountEqual = hasSameOpenCloseBraceCount(fact)
 		if (!braceCountEqual)
-			throw IllegalArgumentException("Fact brace count doesn't match: [$fact]")
+			throw IllegalArgumentException("Fact brace count doesn't match: $fact")
 	}
 
 	private fun checkAdjacentOperators(line: String) {
@@ -44,7 +47,7 @@ class Validator {
 				.firstOrNull { Symbol.isOperator(it.first) && Symbol.isOperator(it.second) } != null
 
 		if (hasAdjacentOperators)
-			throw IllegalArgumentException("Found adjacent operators in <$line>")
+			throw IllegalArgumentException("Found adjacent operators: $line")
 	}
 
 	fun isValidSplit(split: List<String>): Boolean {
