@@ -44,7 +44,7 @@ class Reader(private val args: Array<String>) {
 			when {
 				line.startsWith("=") -> fillTruths(line)
 				line.startsWith("?") -> fillQueries(line)
-				line.startsWith("|") -> fillAnswers(line)
+//				line.startsWith("|") -> fillAnswers(line)
 				else -> addRule(line)
 			}
 		}

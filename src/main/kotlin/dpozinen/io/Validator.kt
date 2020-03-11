@@ -53,7 +53,7 @@ class Validator {
 		return split.all { hasSameOpenCloseBraceCount(it) }
 	}
 
-	private fun hasSameOpenCloseBraceCount(s: String) = s.count { c -> c == '(' } - s.count { c -> c == ')' } == 0
+	fun hasSameOpenCloseBraceCount(s: String) = s.count { c -> c == '(' } - s.count { c -> c == ')' } == 0
 
 	fun preCheckRule(line: String) {
 		if (!hasSameOpenCloseBraceCount(line))

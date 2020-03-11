@@ -19,7 +19,7 @@ class Parser(private val input: Input) {
 		validator.preCheckRule(line);
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {
-			leaf = Rule(line, line.startsWith("!") && isBraceWrapping(line, ::isNotSplittableByAnyOperator)) // TODO("make true only for braces")
+			leaf = Rule(line, line.startsWith("!") && isBraceWrapping(line, ::isNotSplittableByAnyOperator))
 			when {
 				isSplittableBy(line, Symbol.XOR) -> parse(leaf, line, Symbol.XOR)
 				isSplittableBy(line, Symbol.OR) -> parse(leaf, line, Symbol.OR)
@@ -55,11 +55,11 @@ class Parser(private val input: Input) {
 	}
 
 	private fun isBraceWrapping(line: String, f: KFunction1<String, Boolean>): Boolean {
-		if (line.contains("(").or(line.contains(")"))) {
+		if (line.contains("(") || line.contains(")") && validator.hasSameOpenCloseBraceCount(line)) {
 			var l = line
 
 			do l = l.removePrefix("!").removePrefix("(").removeSuffix(")")
-			while (f.invoke(l) && (l.startsWith("!").or(l.startsWith("("))))
+			while (f.invoke(l) && (l.startsWith("!") || l.startsWith("(")))
 
 			return !f.invoke(l)
 		}
