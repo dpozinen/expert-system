@@ -31,8 +31,7 @@ class Reader(private val args: Array<String>) {
 	}
 
 	private fun fillFlags() {
-		if (args.contains("-v")) input.verbose = true
-		if (args.contains("-raq")) input.rulesAsQueries = true
+		if (args.contains("-q")) input.quite = true
 		if (args.contains("-fn")) input.fullNames = true
 	}
 
@@ -64,7 +63,7 @@ class Reader(private val args: Array<String>) {
 	private fun fillTruths(line: String) = fillWithLeafs(line.removePrefix("="), input.truths)
 
 	private fun fillWithLeafs(line: String, target: MutableList<Leaf>) {
-		if (input.rulesAsQueries || input.fullNames)
+		if (input.fullNames)
 			line.split(",").forEach { addLeafToTarget(target, it) }
 		else
 			line.map { it.toString() }.forEach { addLeafToTarget(target, it) }

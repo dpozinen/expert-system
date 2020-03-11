@@ -36,7 +36,7 @@ class Validator {
 			throw IllegalArgumentException("Fact brace count doesn't match: [$fact]")
 	}
 
-	fun checkAdjacentOperators(line: String) {
+	private fun checkAdjacentOperators(line: String) {
 		val bothAreSymbols: (Pair<Char, Char>) -> Boolean = { p ->
 			Symbol.isSymbol(p.first.toString()) && Symbol.isSymbol(p.second.toString())
 		}
