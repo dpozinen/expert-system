@@ -12,7 +12,7 @@ class Reader(private val args: Array<String>) {
 	private val input: Input = Input()
 	private val parser: Parser = Parser(input)
 
-	fun read(lines: List<String>): Input {
+	fun read(lines: Collection<String>): Input {
 		try {
 			val cleanLines = lines.map { it.replace(Regex("\\s+"), "") }
 					.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
