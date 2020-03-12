@@ -20,15 +20,13 @@ class Output(
 	}
 
 	override fun toString(): String {
-		return if (input.quiet) {
-			if (statements.isNotEmpty())
-				statements.last() + "\n"
-			else
-				"Could not find solution"
-		} else {
-			"""Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
-				|${statements.joinToString("\n")}
-			""".trimMargin()
+		return when {
+			input.hasException() -> input.ex!!.message!!
+			statements.isEmpty() -> "Could not find solution"
+			input.quiet -> statements.last() + "\n"
+			else -> """Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
+						|${statements.joinToString("\n")}
+					""".trimMargin()
 		}
 	}
 }
