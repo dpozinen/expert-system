@@ -12,6 +12,14 @@ class Solver {
 
 	@Suppress("UnstableApiUsage")
 	fun solve(input: Input): List<Output> {
+		if (input.queries.isEmpty()) {
+			if (input.hasException())
+				System.err.println(input.ex)
+			else
+				System.err.println("Could not solve")
+			return emptyList()
+		}
+
 		return input.queries.map {
 			val stopwatch = Stopwatch.createStarted()
 			val statements = solveFor(it)
