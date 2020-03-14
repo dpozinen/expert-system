@@ -3,6 +3,8 @@
  */
 package dpozinen
 
+import com.xenomachina.argparser.ArgParser
+import dpozinen.io.Args
 import dpozinen.io.Input
 import dpozinen.io.Reader
 import dpozinen.logic.Solver
@@ -13,12 +15,18 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ExpertTest {
+
+	private val args: Args = ArgParser(arrayOf("-t", "-q")).parseInto(::Args)
+
 	@Test
 	fun custom() {
 		val lines = """
-        
+		'Sasha sucks dicks' => 'Sasha is gay'
+
+        ='Sasha sucks dicks'
+        ?'Sasha is gay'
 	    """.trimIndent().split("\n")
-		val input = Reader(emptyArray()).read(lines)
+		val input = Reader(args).read(lines)
 		solve(input)
 	}
 
@@ -33,7 +41,7 @@ class ExpertTest {
 
 	@Test
 	fun and() {
-		getFiles(Regex(".*and.*")).forEach { solve(it) }
+		getFiles(Regex(".*and_subject2.*")).forEach { solve(it) }
 	}
 
 	private val pathToResources = Paths.get("").toAbsolutePath().toString() + "\\src\\test\\resources\\"
@@ -42,13 +50,13 @@ class ExpertTest {
 				.flatMap { f -> f.walk().asSequence() }
 				.filter { it.isFile }
 				.map { it.absolutePath }
-				.toSet()
+				.distinct()
 				.toList()
 	}
 
 	private fun solve(file: String): Input {
 		print("Solving %s%n".format(file))
-		val input = Reader(arrayOf(file)).read()
+		val input = Reader(args, file).read()
 		solve(input)
 		print("----------------------\n\n")
 		return input
