@@ -11,11 +11,10 @@ import kotlin.reflect.KFunction1
 /**
  * @author dpozinen
  */
-class Parser(private val input: Input) {
-
-	private val validator: Validator = Validator()
+class Parser(private val input: Input, private val validator: Validator) {
 
 	fun parseRule(line: String): Leaf {
+		val line = line.trim()
 		validator.preCheckRule(line)
 		val leaf: Leaf
 		if (line.contains(Regex("[|^+]"))) {

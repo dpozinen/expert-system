@@ -6,7 +6,7 @@ import dpozinen.logic.Symbol
  * @author dpozinen
  */
 
-class Validator {
+class Validator(private val input: Input) {
 
 	fun checkConclusionOperator(line:String) {
 		if (!line.contains("=>")) throw IllegalArgumentException("Missing conclusion operator: $line")
@@ -26,11 +26,15 @@ class Validator {
 
 	fun checkFact(fact: String) {
 		checkBraces(fact)
-		val cleanFact = fact.replace(Regex("[()!]"), "")
-		if (cleanFact.contains(Regex("\\W+")))
-			throw IllegalArgumentException("Fact can't have symbols: [$fact]")
-		if (cleanFact.length != 1)
-			throw IllegalArgumentException("Invalid fact name: [$fact]")
+		if (input.fullNames) {
+			return
+		} else {
+			val cleanFact = fact.replace(Regex("[()!]"), "")
+			if (cleanFact.contains(Regex("\\W+")))
+				throw IllegalArgumentException("Fact can't have symbols: [$fact]")
+			if (cleanFact.length != 1)
+				throw IllegalArgumentException("Invalid fact name: [$fact]")
+		}
 	}
 
 	private fun checkBraces(fact: String) {

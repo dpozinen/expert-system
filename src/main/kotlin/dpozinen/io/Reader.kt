@@ -5,19 +5,23 @@ import dpozinen.logic.Symbol.ONLYIF
 import dpozinen.logic.leaves.Leaf
 import dpozinen.logic.leaves.Rule
 import java.io.File
+import java.io.IOException
 
 class Reader(private val args: Array<String>) {
 
 	private val fileName: String = if (args.isNotEmpty()) args[0] else ""
 	private val input: Input = Input()
-	private val parser: Parser = Parser(input)
 
 	fun read(lines: Collection<String>): Input {
 		try {
-			val cleanLines = lines.map { it.replace(Regex("\\s+"), "") }
-					.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
-			input.fullInput = cleanLines.joinToString("\n")
 			fillFlags()
+			val cleanLines = lines.map {
+				if (input.fullNames) it.replace(Regex("\\s+"), " ").trim()
+				else it.replace(Regex("\\s+"), "")
+			}
+			.filter { !it.startsWith("#") && it.isNotEmpty() && it.isNotBlank() }
+
+			input.fullInput = cleanLines.joinToString("\n")
 			fillLeaves(cleanLines)
 		} catch (ex: IllegalArgumentException) {
 			input.ex = ex
@@ -26,7 +30,13 @@ class Reader(private val args: Array<String>) {
 	}
 
 	fun read(): Input {
-		val lines = readFile()
+		var lines: List<String>
+		try {
+			lines = readFile()
+		} catch (ex: IOException) {
+			input.ex = ex
+			lines = emptyList()
+		}
 		return read(lines)
 	}
 
@@ -64,21 +74,22 @@ class Reader(private val args: Array<String>) {
 
 	private fun fillWithLeafs(line: String, target: MutableList<Leaf>) {
 		if (input.fullNames)
-			line.split(",").forEach { addLeafToTarget(target, it) }
+			line.split(",").forEach { addLeafToTarget(target, it.trim()) }
 		else
 			line.map { it.toString() }.forEach { addLeafToTarget(target, it) }
 	}
 
 	private fun addLeafToTarget(target: MutableList<Leaf>, name: String) {
 		val leaf = input.leaves.firstOrNull { it.name == name }
-		if (leaf == null) // TODO("maybe just ignore this one")
+		if (leaf == null)
 			throw IllegalArgumentException("The provided target/truth is invalid: $name")
 		else
 			target.add(leaf)
 	}
 
 	private fun addRule(line: String) {
-		val validator = Validator()
+		val validator = Validator(input)
+		val parser = Parser(input, validator)
 
 		validator.checkConclusionOperator(line)
 		val delim = if (line.contains(ONLYIF.symbol)) ONLYIF.symbol else IMPLIES.symbol

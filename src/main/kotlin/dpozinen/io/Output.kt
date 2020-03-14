@@ -26,6 +26,7 @@ class Output(
 			input.quiet -> statements.last() + "\n"
 			else -> """Solving $target took ${stopwatch.elapsed(TimeUnit.MICROSECONDS)} microseconds:
 						|${statements.joinToString("\n")}
+						|
 					""".trimMargin()
 		}
 	}
