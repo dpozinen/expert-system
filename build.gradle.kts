@@ -32,6 +32,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation("com.google.guava:guava:28.1-jre")
 
+// https://mvnrepository.com/artifact/com.xenomachina/kotlin-argparser
+    implementation("com.xenomachina:kotlin-argparser:2.0.7")
+
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
