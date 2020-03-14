@@ -9,20 +9,18 @@ import dpozinen.logic.Solver
 /**
  * @author dpozinen
  */
+// TODO("figure out paths to files and all that")
 fun main(args: Array<String>) = mainBody {
 	ArgParser(args).parseInto(::Args).run {
-		if (args.isNotEmpty()) {
-			if (interactive) {
-				solveInteractive(this)
-			} else {
-				for (file in files) {
-					val input = Reader(this, file).read()
-					Solver().solve(input).forEach { output -> print(output) }
-				}
+		if (interactive)
+			solveInteractive(this)
+		else
+			for (file in files) {
+				println("Solving $file")
+				val input = Reader(this, file).read()
+				Solver().solve(input).forEach { output -> print(output) }
+				println()
 			}
-		} else {
-			System.err.println("No file name provided and interactive flag wasn't set. ")
-		}
 	}
 }
 
