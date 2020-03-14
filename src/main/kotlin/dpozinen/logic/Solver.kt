@@ -14,7 +14,7 @@ class Solver {
 	fun solve(input: Input): List<Output> {
 		if (input.queries.isEmpty()) {
 			if (input.hasException())
-				System.err.println(input.ex)
+				System.err.println(input.ex!!.message!!)
 			else
 				System.err.println("Could not solve")
 			return emptyList()

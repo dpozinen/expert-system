@@ -1,36 +1,32 @@
 package dpozinen
 
+import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.mainBody
+import dpozinen.io.Args
 import dpozinen.io.Reader
 import dpozinen.logic.Solver
 
 /**
  * @author dpozinen
  */
-fun main(args: Array<String>) {
-	if (args.isNotEmpty()) {
-		if (args.contains("-i")) {
-			solveInteractive(args)
+fun main(args: Array<String>) = mainBody {
+	ArgParser(args).parseInto(::Args).run {
+		if (args.isNotEmpty()) {
+			if (interactive) {
+				solveInteractive(this)
+			} else {
+				for (file in files) {
+					val input = Reader(this, file).read()
+					Solver().solve(input).forEach { output -> print(output) }
+				}
+			}
 		} else {
-			val input = Reader(args).read()
-			Solver().solve(input).forEach { print(it) }
+			System.err.println("No file name provided and interactive flag wasn't set. ")
 		}
-	} else {
-		System.err.println("No file name provided and interactive flag wasn't set. ")
-		printUsage()
 	}
 }
 
-fun printUsage() {
-	val usage = """
-		Either a file name has to be provided as the first argument, or the -i flag has to be set.
-		
-		-i     --interactive   Allows live, interactive evaluation of input
-		
-	""".trimIndent()
-	print(usage)
-}
-
-private fun solveInteractive(args: Array<String>) {
+private fun solveInteractive(args: Args) {
 	println("type /h to show help")
 	val comparator = Comparator<String> { o1, _ ->
 		if (o1.startsWith("?") || o1.startsWith("=")) 1
@@ -53,7 +49,7 @@ private fun solveInteractive(args: Array<String>) {
 	}
 }
 
-fun printInteractiveHelp() {
+private fun printInteractiveHelp() {
 	val interactiveHelp = """
 		Any line that is not a command will be considered input to the engine.
 

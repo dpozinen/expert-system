@@ -20,7 +20,7 @@ class Rule(name: String, negate: Boolean) : Leaf(name, negate) {
 					}
 				}
 			}
-			statements.add("$this is ${if (isUndefined) "is undefined, defaulting to false" else value()}")
+			statements.add("$this is ${if (isUndefined) "is undefined, defaulting to false" else value().toString()}")
 		}
 		return value()
 	}

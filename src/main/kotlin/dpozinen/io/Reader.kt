@@ -7,9 +7,7 @@ import dpozinen.logic.leaves.Rule
 import java.io.File
 import java.io.IOException
 
-class Reader(private val args: Array<String>) {
-
-	private val fileName: String = if (args.isNotEmpty()) args[0] else ""
+class Reader(private val args: Args, private val fileName: String = "") {
 	private val input: Input = Input()
 
 	fun read(lines: Collection<String>): Input {
@@ -34,15 +32,15 @@ class Reader(private val args: Array<String>) {
 		try {
 			lines = readFile()
 		} catch (ex: IOException) {
-			input.ex = ex
+			input.ex = IllegalStateException("File could not be read: $fileName")
 			lines = emptyList()
 		}
 		return read(lines)
 	}
 
 	private fun fillFlags() {
-		if (args.contains("-q")) input.quiet = true
-		if (args.contains("-fn")) input.fullNames = true
+		input.quiet = args.quiet
+		input.fullNames = args.fullNames
 	}
 
 	private fun readFile() = if (fileName.isNotEmpty()) File(fileName).readLines() else emptyList()
