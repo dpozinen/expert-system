@@ -8,6 +8,12 @@ import com.xenomachina.argparser.SystemExitException
  */
 
 class Args(parser: ArgParser) {
+
+	private val test by parser.flagging(
+			"-t",
+			help = "testing mode, when flag validation is disabled."
+	)
+
 	val interactive by parser.flagging(
 			"-i", "--interactive",
 			help = "Enable interactive mode, where input is taken from stdin. Use /help or /h to show help in this mode"
@@ -16,7 +22,7 @@ class Args(parser: ArgParser) {
 	val files by parser.adding(
 			"-f", "--file",
 			help = "File to read from"
-	).addValidator { if (value.isEmpty() && !interactive) throw SystemExitException("Interactive flag not set and no files provided", 0) }
+	).addValidator { if (!test && value.isEmpty() && !interactive) throw SystemExitException("Interactive flag not set and no files provided", 0) }
 
 	val quiet by parser.flagging(
 			"-q", "--quiet",
