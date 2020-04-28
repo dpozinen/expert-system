@@ -16,7 +16,7 @@ class Input {
 	var fullNames: Boolean = false
 	var quiet: Boolean = false
 
-	override fun toString(): String = fullInput
+	override fun toString(): String = "\n" + fullInput + "\n"
 
 	fun hasException(): Boolean = ex != null
 }
